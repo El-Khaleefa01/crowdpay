@@ -98,6 +98,20 @@ jobs:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/crowdpay_test
         run: npm run migrate
 
+      - name: Seed test data for validation scripts
+        working-directory: ./backend
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/crowdpay_test
+          PGPASSWORD: password
+        run: |
+          psql -h localhost -U postgres -d crowdpay_test -f db/seed.sql
+
+      - name: Validate milestone percentages
+        working-directory: ./backend
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/crowdpay_test
+        run: npm run validate-milestones
+
       - name: Upgrade production-like fixture and verify schema.sql/migrations converge
         working-directory: ./backend
         # Two disposable databases are built here; bound the step so a dead
